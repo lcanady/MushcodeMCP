@@ -1,0 +1,86 @@
+# MUSHCODE MCP Server - Docker Compose for Development
+version: '3.8'
+
+services:
+  mushcode-mcp-server-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+    image: mushcode-mcp-server:dev
+    container_name: mushcode-mcp-server-dev
+    restart: unless-stopped
+    
+    # Environment variables for development
+    environment:
+      - NODE_ENV=development
+      - MUSHCODE_LOG_LEVEL=debug
+      - MUSHCODE_CACHE_SIZE=500
+      - MUSHCODE_CACHE_TTL=60000
+      - PORT=3000
+    
+    # Port mapping
+    ports:
+      - "3000:3000"
+      - "9229:9229"  # Node.js debugger port
+    
+    # Volume mounts for development
+    volumes:
+      - .:/app
+      - /app/node_modules  # Prevent overwriting node_modules
+      - mushcode-dev-logs:/app/logs
+      - mushcode-dev-cache:/app/cache
+    
+    # Override command for development with hot reload
+    command: ["npm", "run", "dev"]
+    
+    # Working directory
+    working_dir: /app
+    
+    # Enable debugging
+    stdin_open: true
+    tty: true
+    
+    # Health check (more lenient for development)
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health", "||", "exit", "1"]
+      interval: 60s
+      timeout: 10s
+      retries: 2
+      start_period: 30s
+    
+    # Logging configuration
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "2"
+
+  # Optional: Add a test runner service
+  mushcode-test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+    image: mushcode-mcp-server:test
+    container_name: mushcode-mcp-server-test
+    
+    environment:
+      - NODE_ENV=test
+      - MUSHCODE_LOG_LEVEL=error
+    
+    volumes:
+      - .:/app
+      - /app/node_modules
+    
+    command: ["npm", "test"]
+    
+    profiles:
+      - test
+
+# Named volumes for development
+volumes:
+  mushcode-dev-logs:
+    driver: local
+  mushcode-dev-cache:
+    driver: local

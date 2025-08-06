@@ -1,0 +1,51 @@
+{
+  "server": {
+    "name": "mushcode-mcp-server",
+    "version": "1.0.0",
+    "description": "A specialized Model Context Protocol server for MUSHCODE development assistance"
+  },
+  "knowledge": {
+    "dataPath": "./data/knowledge",
+    "cacheEnabled": true,
+    "cacheSize": 1000,
+    "lazyLoading": true
+  },
+  "performance": {
+    "responseTimeoutMs": 5000,
+    "maxConcurrentRequests": 10,
+    "enableMetrics": false
+  },
+  "logging": {
+    "level": "info",
+    "enableFileLogging": false,
+    "logFilePath": "./logs/mushcode-mcp.log"
+  },
+  "security": {
+    "enableInputValidation": true,
+    "maxInputLength": 10000,
+    "enableRateLimiting": false,
+    "rateLimit": {
+      "windowMs": 60000,
+      "maxRequests": 100
+    }
+  },
+  "tools": {
+    "enabled": [
+      "generate_mushcode",
+      "validate_mushcode",
+      "optimize_mushcode",
+      "explain_mushcode",
+      "get_examples",
+      "format_mushcode",
+      "compress_mushcode"
+    ],
+    "disabled": [],
+    "defaultServerType": "PennMUSH",
+    "supportedServerTypes": [
+      "PennMUSH",
+      "TinyMUSH",
+      "RhostMUSH",
+      "TinyMUX"
+    ]
+  }
+}

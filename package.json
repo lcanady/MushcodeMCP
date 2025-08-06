@@ -1,0 +1,100 @@
+{
+  "name": "mushcode-mcp-server",
+  "version": "1.0.0",
+  "description": "A specialized Model Context Protocol server for MUSHCODE development assistance",
+  "main": "dist/server/index.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch src/server/index.ts",
+    "start": "node dist/server/index.js",
+    "start:network": "node dist/server/network-server.js",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:unit": "jest --testPathPattern=unit",
+    "test:integration": "jest --testPathPattern=integration",
+    "test:deployment": "jest --testPathPattern=deployment --runInBand",
+    "test:performance": "jest --testPathPattern=performance --runInBand",
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix",
+    "format": "prettier --write src/**/*.ts",
+    "type-check": "tsc --noEmit",
+    "populate-kb": "tsx scripts/populate-knowledge-base.ts",
+    "load-kb": "tsx scripts/load-knowledge-base.ts",
+    "start:local": "./scripts/start-local-server.sh",
+    "test:mcp": "node scripts/test-mcp-tools.js",
+    "test:tools": "node scripts/test-tools-directly.js",
+    "test:servers": "node scripts/simple-server-type-test.js",
+    "test:comprehensive": "node scripts/comprehensive-server-test.js",
+    "docker:build": "./scripts/docker-build.sh",
+    "docker:dev": "docker-compose -f docker-compose.dev.yml up",
+    "docker:prod": "docker-compose up -d",
+    "docker:test": "docker-compose -f docker-compose.dev.yml --profile test up mushcode-test",
+    "docker:build": "./scripts/docker-build.sh",
+    "docker:run": "./scripts/docker-run.sh",
+    "docker:dev": "docker-compose -f docker-compose.dev.yml up",
+    "docker:prod": "docker-compose up -d",
+    "docker:network": "docker-compose -f docker-compose.network.yml up",
+    "docker:production": "docker-compose -f docker-compose.production.yml up -d",
+    "test:connection": "node examples/test-connection.js",
+    "test:remote": "./scripts/test-remote-deployment.sh",
+    "deploy": "./deploy/deploy.sh",
+    "package": "npm run build && npm pack",
+    "prepublishOnly": "npm run build && npm run test",
+    "validate-config": "node dist/scripts/validate-config.js",
+    "generate-config": "node dist/scripts/generate-config.js"
+  },
+  "keywords": [
+    "mcp",
+    "mushcode",
+    "mud",
+    "development",
+    "ai-assistant",
+    "model-context-protocol",
+    "code-generation",
+    "code-validation"
+  ],
+  "author": "MUSHCODE MCP Server Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/mushcode-mcp-server.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-org/mushcode-mcp-server/issues"
+  },
+  "homepage": "https://github.com/your-org/mushcode-mcp-server#readme",
+  "bin": {
+    "mushcode-mcp-server": "./dist/server/index.js"
+  },
+  "files": [
+    "dist/",
+    "data/",
+    "mushcode-mcp.config.json",
+    "README.md",
+    "LICENSE"
+  ],
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^0.5.0",
+    "express": "^4.18.2",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/jest": "^29.5.0",
+    "@types/node": "^20.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "eslint": "^8.0.0",
+    "jest": "^29.5.0",
+    "prettier": "^3.0.0",
+    "ts-jest": "^29.1.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

@@ -1,0 +1,193 @@
+# MUSHCODE MCP Server - Production Remote Deployment
+version: '3.8'
+
+services:
+  # Main MCP Server
+  mushcode-mcp-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    image: mushcode-mcp-server:latest
+    container_name: mushcode-mcp-server
+    restart: unless-stopped
+    
+    environment:
+      - NODE_ENV=production
+      - MUSHCODE_LOG_LEVEL=info
+      - MUSHCODE_CACHE_SIZE=1000
+      - MUSHCODE_CACHE_TTL=300000
+      - NETWORK_PORT=3001
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS:-*}
+      - API_KEY=${API_KEY}
+      - ENABLE_RATE_LIMITING=true
+      - RATE_LIMIT_WINDOW_MS=60000
+      - RATE_LIMIT_MAX_REQUESTS=100
+    
+    # Internal port only (accessed via reverse proxy)
+    expose:
+      - "3001"
+    
+    volumes:
+      - mushcode-logs:/app/logs
+      - mushcode-cache:/app/cache
+      - ./mushcode-mcp.config.json:/app/mushcode-mcp.config.json:ro
+    
+    command: ["node", "dist/server/network-server.js"]
+    
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+    
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    
+    security_opt:
+      - no-new-privileges:true
+    
+    read_only: true
+    tmpfs:
+      - /tmp:noexec,nosuid,size=100m
+    
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "5"
+    
+    networks:
+      - mcp-network
+
+  # Reverse Proxy with SSL
+  nginx:
+    image: nginx:alpine
+    container_name: mushcode-nginx
+    restart: unless-stopped
+    
+    ports:
+      - "80:80"
+      - "443:443"
+    
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./ssl:/etc/nginx/ssl:ro
+      - nginx-logs:/var/log/nginx
+    
+    depends_on:
+      - mushcode-mcp-server
+    
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    
+    networks:
+      - mcp-network
+
+  # Redis for caching and rate limiting
+  redis:
+    image: redis:7-alpine
+    container_name: mushcode-redis
+    restart: unless-stopped
+    
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
+    
+    volumes:
+      - redis-data:/data
+    
+    expose:
+      - "6379"
+    
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 30s
+      timeout: 3s
+      retries: 5
+    
+    networks:
+      - mcp-network
+
+  # Monitoring with Prometheus (optional)
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: mushcode-prometheus
+    restart: unless-stopped
+    
+    ports:
+      - "9090:9090"
+    
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    
+    networks:
+      - mcp-network
+    
+    profiles:
+      - monitoring
+
+  # Grafana for dashboards (optional)
+  grafana:
+    image: grafana/grafana:latest
+    container_name: mushcode-grafana
+    restart: unless-stopped
+    
+    ports:
+      - "3000:3000"
+    
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-admin}
+    
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources:ro
+    
+    depends_on:
+      - prometheus
+    
+    networks:
+      - mcp-network
+    
+    profiles:
+      - monitoring
+
+volumes:
+  mushcode-logs:
+    driver: local
+  mushcode-cache:
+    driver: local
+  redis-data:
+    driver: local
+  nginx-logs:
+    driver: local
+  prometheus-data:
+    driver: local
+  grafana-data:
+    driver: local
+
+networks:
+  mcp-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
