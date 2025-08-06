@@ -15,7 +15,7 @@ async function main(): Promise<void> {
   }
 
   const config = configManager.getConfig();
-  const port = parseInt(process.env.NETWORK_PORT || process.env.PORT || '3001');
+  const port = parseInt(process.env['NETWORK_PORT'] || process.env['PORT'] || '3001');
   
   console.log(`Starting ${config.server.name} v${config.server.version} (Network Mode)`);
   console.log(`Description: ${config.server.description}`);

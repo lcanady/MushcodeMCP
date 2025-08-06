@@ -103,6 +103,23 @@ export class MushcodeToolRegistry implements ToolRegistry {
   }
 
   /**
+   * Execute a tool with the given arguments
+   */
+  async callTool(name: string, args: any = {}): Promise<any> {
+    const tool = this.getTool(name);
+    if (!tool) {
+      throw new Error(`Tool '${name}' not found`);
+    }
+
+    const handler = this.getToolHandler(name);
+    if (!handler) {
+      throw new Error(`No handler registered for tool '${name}'`);
+    }
+
+    return await handler(args);
+  }
+
+  /**
    * Validate that all registered tools have corresponding handlers
    */
   validateRegistry(): string[] {

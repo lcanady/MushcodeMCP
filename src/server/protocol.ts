@@ -123,7 +123,7 @@ export class MushcodeProtocolHandler {
   /**
    * Register default MUSHCODE tools
    */
-  private async registerDefaultTools(): Promise<void> {
+  public async registerDefaultTools(): Promise<void> {
     const config = this.configManager.getConfig();
     
     // Initialize knowledge base with configuration
