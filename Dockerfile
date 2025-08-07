@@ -49,7 +49,8 @@ WORKDIR /app
 # Install runtime dependencies only
 RUN apk add --no-cache \
     dumb-init \
-    tini
+    tini \
+    curl
 
 # Copy built application from builder stage
 COPY --from=builder --chown=mushcode:mushcode /app/dist ./dist

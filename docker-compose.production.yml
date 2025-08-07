@@ -7,7 +7,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      target: production
     image: mushcode-mcp-server:latest
     container_name: mushcode-mcp-server
     restart: unless-stopped
@@ -37,14 +36,12 @@ services:
     
     # Resource limits (using mem_limit for compatibility)
     mem_limit: 1G
-    cpus: 2.0
     
     healthcheck:
-      test: ["CMD", "node", "-e", "const http = require('http'); http.get('http://localhost:3001/health', (res) => process.exit(res.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"]
+      test: ["CMD-SHELL", "curl -f http://localhost:3001/health || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 15s
     
     security_opt:
       - no-new-privileges:true
@@ -136,9 +133,6 @@ services:
     
     networks:
       - mcp-network
-    
-    profiles:
-      - monitoring
 
   # Grafana for dashboards (optional)
   grafana:
@@ -162,9 +156,6 @@ services:
     
     networks:
       - mcp-network
-    
-    profiles:
-      - monitoring
 
 volumes:
   mushcode-logs:

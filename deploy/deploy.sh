@@ -83,18 +83,10 @@ fi
 echo "🏗️  Building Docker image..."
 cd "$PROJECT_DIR"
 
-# Use simple version if docker-compose version is older
+# Use simple version for better compatibility
 COMPOSE_VERSION=$(docker-compose --version | grep -oP '\d+\.\d+' | head -1)
-MAJOR_VERSION=$(echo $COMPOSE_VERSION | cut -d. -f1)
-MINOR_VERSION=$(echo $COMPOSE_VERSION | cut -d. -f2)
-
-if [ "$MAJOR_VERSION" -lt 1 ] || ([ "$MAJOR_VERSION" -eq 1 ] && [ "$MINOR_VERSION" -lt 25 ]); then
-    echo "📦 Using compatible Docker Compose configuration for version $COMPOSE_VERSION"
-    COMPOSE_FILE="docker-compose.production.simple.yml"
-else
-    echo "📦 Using full Docker Compose configuration for version $COMPOSE_VERSION"
-    COMPOSE_FILE="docker-compose.production.yml"
-fi
+echo "📦 Using compatible Docker Compose configuration for version $COMPOSE_VERSION"
+COMPOSE_FILE="docker-compose.production.simple.yml"
 
 docker-compose -f $COMPOSE_FILE build
 
