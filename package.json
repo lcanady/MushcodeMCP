@@ -1,6 +1,6 @@
 {
   "name": "mushcode-mcp-server",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A specialized Model Context Protocol server for MUSHCODE development assistance. Provides AI-powered code generation, validation, optimization, and examples for MUD development.",
   "main": "dist/server/index.js",
   "types": "dist/server/index.d.ts",
