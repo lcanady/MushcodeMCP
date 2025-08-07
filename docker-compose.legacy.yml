@@ -1,0 +1,16 @@
+# MUSHCODE MCP Server - Legacy Docker Compatibility
+version: '2'
+
+services:
+  mushcode-mcp-server:
+    build: .
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - NETWORK_PORT=3001
+      - API_KEY=${API_KEY}
+    volumes:
+      - ./mushcode-mcp.config.json:/app/mushcode-mcp.config.json:ro
+    command: ["node", "dist/server/network-server.js"]
+    restart: unless-stopped
