@@ -83,10 +83,10 @@ fi
 echo "🏗️  Building Docker image..."
 cd "$PROJECT_DIR"
 
-# Use simple version for better compatibility
+# Use minimal version for maximum compatibility
 COMPOSE_VERSION=$(docker-compose --version | grep -oP '\d+\.\d+' | head -1)
-echo "📦 Using compatible Docker Compose configuration for version $COMPOSE_VERSION"
-COMPOSE_FILE="docker-compose.production.simple.yml"
+echo "📦 Using minimal Docker Compose configuration for version $COMPOSE_VERSION"
+COMPOSE_FILE="docker-compose.minimal.yml"
 
 docker-compose -f $COMPOSE_FILE build
 

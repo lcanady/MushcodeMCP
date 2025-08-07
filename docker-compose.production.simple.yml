@@ -7,7 +7,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      target: production
     image: mushcode-mcp-server:latest
     container_name: mushcode-mcp-server
     restart: unless-stopped
@@ -44,7 +43,6 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 15s
     
     # Logging configuration
     logging:

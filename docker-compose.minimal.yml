@@ -1,0 +1,26 @@
+# MUSHCODE MCP Server - Minimal Production Deployment
+version: '2'
+
+services:
+  mushcode-mcp-server:
+    build: .
+    image: mushcode-mcp-server:latest
+    container_name: mushcode-mcp-server
+    restart: unless-stopped
+    
+    environment:
+      - NODE_ENV=production
+      - MUSHCODE_LOG_LEVEL=info
+      - NETWORK_PORT=3001
+      - API_KEY=${API_KEY:-your-api-key}
+      - ENABLE_RATE_LIMITING=true
+    
+    ports:
+      - "3001:3001"
+    
+    volumes:
+      - ./mushcode-mcp.config.json:/app/mushcode-mcp.config.json:ro
+    
+    command: ["node", "dist/server/network-server.js"]
+    
+    mem_limit: 1g
