@@ -14,6 +14,8 @@ import {
 } from '../types/knowledge.js';
 import { readFile } from 'fs/promises';
 import { join } from 'path';
+import { GitHubScraper, GitHubRepo } from './github-scraper.js';
+import { HelpFileProcessor } from './help-processor.js';
 
 /**
  * Populates knowledge base with data from mushcode.com
@@ -733,5 +735,65 @@ export class MushcodePopulator {
     ];
 
     paths.forEach(path => this.knowledgeBase.addLearningPath(path));
+  }
+
+  /**
+   * Populate knowledge base from local help files
+   */
+  async populateFromHelpFiles(): Promise<void> {
+    console.log('Starting help file population...');
+    
+    const processor = new HelpFileProcessor(this.knowledgeBase);
+    
+    try {
+      await processor.processHelpFiles();
+      console.log('Help file population completed.');
+      console.log(`Stats: ${JSON.stringify(this.knowledgeBase.getStats(), null, 2)}`);
+    } catch (error) {
+      console.warn('Help file processing failed, continuing with existing data:', (error as Error).message);
+    }
+  }
+
+  /**
+   * Populate from GitHub repositories
+   */
+  async populateFromGitHub(): Promise<void> {
+    console.log('Starting GitHub repository population...');
+    
+    // Get GitHub token from environment variable
+    const githubToken = process.env['GITHUB_TOKEN'];
+    if (!githubToken) {
+      console.log('⚠️  No GITHUB_TOKEN found - using unauthenticated requests (limited to 60/hour)');
+    } else {
+      console.log('✅ Using GitHub token for authenticated requests (5000/hour limit)');
+    }
+    
+    const scraper = new GitHubScraper(this.knowledgeBase, githubToken);
+    
+    const repositories: GitHubRepo[] = [
+      {
+        owner: 'thenomain',
+        name: 'GMCCG',
+        description: 'Game Master\'s Creative Coding Guide - MUSHCODE examples and utilities'
+      },
+      {
+        owner: 'thenomain',
+        name: 'Mu--Support-Systems',
+        description: 'MU* Support Systems - Comprehensive MUSHCODE support systems'
+      },
+      {
+        owner: 'thenomain',
+        name: 'liberation_sandbox',
+        description: 'Liberation MUSH sandbox - Additional MUSHCODE examples and systems'
+      }
+    ];
+
+    try {
+      await scraper.scrapeRepositories(repositories);
+      console.log('GitHub repository population completed.');
+      console.log(`Stats: ${JSON.stringify(this.knowledgeBase.getStats(), null, 2)}`);
+    } catch (error) {
+      console.warn('GitHub scraping failed, continuing with existing data:', (error as Error).message);
+    }
   }
 }

@@ -1,0 +1,37 @@
+#!/bin/bash
+
+echo "🔑 GitHub Token Setup for MUSHCODE MCP Server"
+echo "=============================================="
+echo ""
+echo "To avoid GitHub API rate limits, you need a Personal Access Token."
+echo ""
+echo "Steps to create a GitHub Personal Access Token:"
+echo "1. Go to: https://github.com/settings/tokens"
+echo "2. Click 'Generate new token (classic)'"
+echo "3. Give it a descriptive name like 'MUSHCODE MCP Server'"
+echo "4. Select the 'public_repo' scope (allows access to public repositories)"
+echo "5. Click 'Generate token'"
+echo "6. Copy the token (you won't see it again!)"
+echo ""
+echo "Then add it to your .env file:"
+echo "  cp .env.example .env"
+echo "  # Edit .env and replace 'your_github_token_here' with your actual token"
+echo ""
+echo "Or set it as an environment variable:"
+echo "  export GITHUB_TOKEN=your_token_here"
+echo ""
+echo "Rate limits:"
+echo "  • Without token: 60 requests/hour"
+echo "  • With token: 5000 requests/hour"
+echo ""
+
+if [ -n "$GITHUB_TOKEN" ]; then
+    echo "✅ GITHUB_TOKEN is already set!"
+    echo "   Token starts with: ${GITHUB_TOKEN:0:8}..."
+else
+    echo "❌ GITHUB_TOKEN is not set"
+    echo ""
+    echo "After setting the token, you can run:"
+    echo "  npm run scrape:github"
+    echo "  npm run populate:enhanced"
+fi

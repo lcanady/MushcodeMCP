@@ -1,8 +1,9 @@
 {
   "name": "mushcode-mcp-server",
   "version": "1.0.0",
-  "description": "A specialized Model Context Protocol server for MUSHCODE development assistance",
+  "description": "A specialized Model Context Protocol server for MUSHCODE development assistance. Provides AI-powered code generation, validation, optimization, and examples for MUD development.",
   "main": "dist/server/index.js",
+  "types": "dist/server/index.d.ts",
   "type": "module",
   "scripts": {
     "build": "tsc",
@@ -27,21 +28,23 @@
     "test:tools": "node scripts/test-tools-directly.js",
     "test:servers": "node scripts/simple-server-type-test.js",
     "test:comprehensive": "node scripts/comprehensive-server-test.js",
+    "scrape:github": "tsx scripts/scrape-github-repos.ts",
+    "process:helps": "tsx scripts/process-help-files.ts",
+    "populate:enhanced": "tsx scripts/populate-with-github.ts",
     "docker:build": "./scripts/docker-build.sh",
     "docker:dev": "docker-compose -f docker-compose.dev.yml up",
     "docker:prod": "docker-compose up -d",
     "docker:test": "docker-compose -f docker-compose.dev.yml --profile test up mushcode-test",
-    "docker:build": "./scripts/docker-build.sh",
     "docker:run": "./scripts/docker-run.sh",
-    "docker:dev": "docker-compose -f docker-compose.dev.yml up",
-    "docker:prod": "docker-compose up -d",
     "docker:network": "docker-compose -f docker-compose.network.yml up",
     "docker:production": "docker-compose -f docker-compose.production.yml up -d",
     "test:connection": "node examples/test-connection.js",
     "test:remote": "./scripts/test-remote-deployment.sh",
     "deploy": "./deploy/deploy.sh",
     "package": "npm run build && npm pack",
-    "prepublishOnly": "npm run build && npm run test",
+    "prepublishOnly": "npm run build",
+    "prepack": "npm run build",
+    "postpack": "echo '📦 Package created successfully!'",
     "validate-config": "node dist/scripts/validate-config.js",
     "generate-config": "node dist/scripts/generate-config.js"
   },
@@ -49,39 +52,56 @@
     "mcp",
     "mushcode",
     "mud",
+    "mush",
     "development",
     "ai-assistant",
     "model-context-protocol",
     "code-generation",
-    "code-validation"
+    "code-validation",
+    "pennmush",
+    "tinymush",
+    "rhostmush",
+    "tinymux",
+    "mcp-server",
+    "ai-tools",
+    "code-optimization",
+    "mcp-tools"
   ],
-  "author": "MUSHCODE MCP Server Team",
+  "author": {
+    "name": "lcanady",
+    "url": "https://github.com/lcanady"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-org/mushcode-mcp-server.git"
+    "url": "git+https://github.com/lcanady/MushcodeMCP.git"
   },
   "bugs": {
-    "url": "https://github.com/your-org/mushcode-mcp-server/issues"
+    "url": "https://github.com/lcanady/MushcodeMCP/issues"
   },
-  "homepage": "https://github.com/your-org/mushcode-mcp-server#readme",
+  "homepage": "https://github.com/lcanady/MushcodeMCP#readme",
   "bin": {
-    "mushcode-mcp-server": "./dist/server/index.js"
+    "mushcode-mcp-server": "./dist/cli/index.js"
   },
   "files": [
     "dist/",
     "data/",
     "mushcode-mcp.config.json",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "docs/",
+    "examples/"
   ],
   "dependencies": {
     "@modelcontextprotocol/sdk": "^0.5.0",
-    "express": "^4.18.2",
-    "cors": "^2.8.5"
+    "commander": "^11.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.1",
+    "express": "^4.18.2"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
+    "@types/dotenv": "^6.1.1",
     "@types/express": "^4.17.21",
     "@types/jest": "^29.5.0",
     "@types/node": "^20.0.0",

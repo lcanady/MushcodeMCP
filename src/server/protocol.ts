@@ -137,9 +137,23 @@ export class MushcodeProtocolHandler {
     const { formatMushcodeTool, formatMushcodeHandler } = await import('../tools/format.js');
     const { compressMushcodeTool, compressMushcodeHandler } = await import('../tools/compress.js');
     
-    const knowledgeBase = new MushcodeKnowledgeBase();
-    const populator = new MushcodePopulator(knowledgeBase);
-    await populator.populateFromMushcodeCom();
+    // Load the enhanced knowledge base from persisted data
+    const { KnowledgeBasePersistence } = await import('../knowledge/persistence.js');
+    const persistence = new KnowledgeBasePersistence();
+    
+    let knowledgeBase: InstanceType<typeof MushcodeKnowledgeBase>;
+    
+    try {
+      // Try to load the enhanced knowledge base first
+      knowledgeBase = await persistence.load();
+      console.log('✅ Loaded enhanced knowledge base with help files and GitHub content');
+    } catch (error) {
+      // Fallback to basic population if enhanced KB not available
+      console.log('⚠️  Enhanced knowledge base not found, falling back to basic population');
+      knowledgeBase = new MushcodeKnowledgeBase();
+      const populator = new MushcodePopulator(knowledgeBase);
+      await populator.populateFromMushcodeCom();
+    }
     
     // Register tools based on configuration
     const toolsConfig = config.tools;
