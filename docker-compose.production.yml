@@ -1,5 +1,5 @@
 # MUSHCODE MCP Server - Production Remote Deployment
-version: '3.8'
+version: '3.3'
 
 services:
   # Main MCP Server
@@ -35,17 +35,12 @@ services:
     
     command: ["node", "dist/server/network-server.js"]
     
-    deploy:
-      resources:
-        limits:
-          cpus: '2.0'
-          memory: 1G
-        reservations:
-          cpus: '0.5'
-          memory: 256M
+    # Resource limits (using mem_limit for compatibility)
+    mem_limit: 1G
+    cpus: 2.0
     
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3001/health"]
+      test: ["CMD", "node", "-e", "const http = require('http'); http.get('http://localhost:3001/health', (res) => process.exit(res.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -87,7 +82,7 @@ services:
       - mushcode-mcp-server
     
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/health"]
+      test: ["CMD", "nginx", "-t"]
       interval: 30s
       timeout: 5s
       retries: 3

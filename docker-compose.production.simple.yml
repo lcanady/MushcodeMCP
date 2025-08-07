@@ -1,0 +1,86 @@
+# MUSHCODE MCP Server - Simple Production Deployment (Compatible)
+version: '2.2'
+
+services:
+  # Main MCP Server
+  mushcode-mcp-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    image: mushcode-mcp-server:latest
+    container_name: mushcode-mcp-server
+    restart: unless-stopped
+    
+    environment:
+      - NODE_ENV=production
+      - MUSHCODE_LOG_LEVEL=info
+      - MUSHCODE_CACHE_SIZE=1000
+      - MUSHCODE_CACHE_TTL=300000
+      - NETWORK_PORT=3001
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS:-*}
+      - API_KEY=${API_KEY}
+      - ENABLE_RATE_LIMITING=true
+      - RATE_LIMIT_WINDOW_MS=60000
+      - RATE_LIMIT_MAX_REQUESTS=100
+    
+    # Port mapping for direct access
+    ports:
+      - "3001:3001"
+    
+    volumes:
+      - mushcode-logs:/app/logs
+      - mushcode-cache:/app/cache
+      - ./mushcode-mcp.config.json:/app/mushcode-mcp.config.json:ro
+    
+    command: ["node", "dist/server/network-server.js"]
+    
+    # Resource limits (compatible format)
+    mem_limit: 1g
+    
+    # Basic health check
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3001/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    
+    # Logging configuration
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "5"
+
+  # Redis for caching and rate limiting
+  redis:
+    image: redis:7-alpine
+    container_name: mushcode-redis
+    restart: unless-stopped
+    
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-defaultpassword}
+    
+    volumes:
+      - redis-data:/data
+    
+    # Only expose internally
+    expose:
+      - "6379"
+    
+    mem_limit: 256m
+    
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 3s
+      retries: 5
+
+# Named volumes for persistent data
+volumes:
+  mushcode-logs:
+    driver: local
+  mushcode-cache:
+    driver: local
+  redis-data:
+    driver: local

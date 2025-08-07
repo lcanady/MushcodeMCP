@@ -82,11 +82,25 @@ fi
 # Build the Docker image
 echo "🏗️  Building Docker image..."
 cd "$PROJECT_DIR"
-docker-compose -f docker-compose.production.yml build
+
+# Use simple version if docker-compose version is older
+COMPOSE_VERSION=$(docker-compose --version | grep -oP '\d+\.\d+' | head -1)
+MAJOR_VERSION=$(echo $COMPOSE_VERSION | cut -d. -f1)
+MINOR_VERSION=$(echo $COMPOSE_VERSION | cut -d. -f2)
+
+if [ "$MAJOR_VERSION" -lt 1 ] || ([ "$MAJOR_VERSION" -eq 1 ] && [ "$MINOR_VERSION" -lt 25 ]); then
+    echo "📦 Using compatible Docker Compose configuration for version $COMPOSE_VERSION"
+    COMPOSE_FILE="docker-compose.production.simple.yml"
+else
+    echo "📦 Using full Docker Compose configuration for version $COMPOSE_VERSION"
+    COMPOSE_FILE="docker-compose.production.yml"
+fi
+
+docker-compose -f $COMPOSE_FILE build
 
 # Start the services
 echo "🚀 Starting MushcodeMCP Server..."
-docker-compose -f docker-compose.production.yml up -d
+docker-compose -f $COMPOSE_FILE up -d
 
 # Wait for services to start
 echo "⏳ Waiting for services to start..."
@@ -94,11 +108,11 @@ sleep 10
 
 # Health check
 echo "🏥 Performing health check..."
-if curl -f -s "http://localhost/health" > /dev/null; then
+if curl -f -s "http://localhost:3001/health" > /dev/null; then
     echo "✅ Server is healthy!"
 else
     echo "❌ Health check failed. Checking logs..."
-    docker-compose -f docker-compose.production.yml logs --tail=20
+    docker-compose -f $COMPOSE_FILE logs --tail=20
     exit 1
 fi
 
@@ -106,30 +120,29 @@ echo ""
 echo "🎉 Deployment completed successfully!"
 echo ""
 echo "📊 Service Status:"
-docker-compose -f docker-compose.production.yml ps
+docker-compose -f $COMPOSE_FILE ps
 echo ""
 echo "🌐 Your MCP server is available at:"
 if [ "$DOMAIN" != "localhost" ]; then
-    echo "   - HTTPS: https://$DOMAIN"
-    echo "   - HTTP: http://$DOMAIN (redirects to HTTPS)"
+    echo "   - HTTP: http://$DOMAIN:3001"
+    echo "   - Direct access (no SSL proxy in simple mode)"
 else
-    echo "   - HTTP: http://localhost"
-    echo "   - HTTPS: https://localhost (self-signed certificate)"
+    echo "   - HTTP: http://localhost:3001"
 fi
 echo ""
 echo "🔧 API Endpoints:"
-echo "   - Health: https://$DOMAIN/health"
-echo "   - Tools: https://$DOMAIN/api/tools"
-echo "   - SSE: https://$DOMAIN/sse"
+echo "   - Health: http://$DOMAIN:3001/health"
+echo "   - Tools: http://$DOMAIN:3001/api/tools"
+echo "   - SSE: http://$DOMAIN:3001/sse"
 echo ""
 echo "📈 Monitoring (if enabled):"
 echo "   - Prometheus: http://$DOMAIN:9090"
 echo "   - Grafana: http://$DOMAIN:3000 (admin:$GRAFANA_PASSWORD)"
 echo ""
 echo "🔍 Useful commands:"
-echo "   - View logs: docker-compose -f docker-compose.production.yml logs -f"
-echo "   - Stop server: docker-compose -f docker-compose.production.yml down"
-echo "   - Restart: docker-compose -f docker-compose.production.yml restart"
+echo "   - View logs: docker-compose -f $COMPOSE_FILE logs -f"
+echo "   - Stop server: docker-compose -f $COMPOSE_FILE down"
+echo "   - Restart: docker-compose -f $COMPOSE_FILE restart"
 echo ""
 
 # Provider-specific instructions
