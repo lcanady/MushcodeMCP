@@ -1,0 +1,251 @@
+[
+  {
+    "name": "PennMUSH",
+    "version": "1.8.8",
+    "description": "PennMUSH is a popular MUSH server with extensive softcode capabilities",
+    "syntaxVariations": [
+      {
+        "ruleId": "penn-switch",
+        "description": "PennMUSH switch() function syntax",
+        "pattern": "switch\\(([^,]+),([^,]+),([^)]+)\\)",
+        "serverSpecific": true,
+        "examples": {
+          "before": "switch(condition, case1, action1, case2, action2)",
+          "after": "switch(condition, case1, action1, case2, action2, default)"
+        }
+      }
+    ],
+    "uniqueFeatures": [
+      {
+        "name": "Regexp Functions",
+        "description": "Advanced regular expression support",
+        "syntax": "regedit(string, pattern, replacement)",
+        "availability": [
+          "1.8.0+"
+        ],
+        "examples": [
+          "regedit(Hello World, l+, X)"
+        ]
+      }
+    ],
+    "securityModel": {
+      "permissionLevels": [
+        "guest",
+        "player",
+        "builder",
+        "wizard",
+        "god"
+      ],
+      "defaultLevel": "player",
+      "escalationRules": [],
+      "restrictedFunctions": [
+        "@shutdown",
+        "@restart",
+        "@dump"
+      ]
+    },
+    "functionLibrary": [
+      {
+        "name": "switch",
+        "description": "Conditional branching function",
+        "syntax": "switch(expression, case1, action1, [case2, action2, ...], [default])",
+        "parameters": [
+          {
+            "name": "expression",
+            "type": "string",
+            "description": "Expression to evaluate",
+            "required": true
+          },
+          {
+            "name": "case",
+            "type": "string",
+            "description": "Case to match against",
+            "required": true
+          }
+        ],
+        "returnType": "string",
+        "permissions": [
+          "public"
+        ],
+        "examples": [
+          "switch(%0, hello, Hi there!, goodbye, See you later!, I don't understand.)"
+        ]
+      }
+    ],
+    "commonPatterns": [],
+    "limitations": [
+      "Limited to 8192 character function returns"
+    ],
+    "documentation": {
+      "url": "https://pennmush.org",
+      "version": "1.8.8",
+      "lastUpdated": "2023-01-01T00:00:00.000Z"
+    }
+  },
+  {
+    "name": "TinyMUSH",
+    "version": "3.3",
+    "description": "TinyMUSH is a classic MUSH server implementation",
+    "syntaxVariations": [],
+    "uniqueFeatures": [
+      {
+        "name": "Zones",
+        "description": "Hierarchical object organization",
+        "syntax": "@zone object=zone",
+        "availability": [
+          "3.0+"
+        ],
+        "examples": [
+          "@zone #123=#100"
+        ]
+      }
+    ],
+    "securityModel": {
+      "permissionLevels": [
+        "guest",
+        "player",
+        "builder",
+        "wizard",
+        "god"
+      ],
+      "defaultLevel": "player",
+      "escalationRules": [],
+      "restrictedFunctions": [
+        "@shutdown",
+        "@restart"
+      ]
+    },
+    "functionLibrary": [],
+    "commonPatterns": [],
+    "limitations": [],
+    "documentation": {
+      "url": "http://tinymush.org",
+      "version": "3.3"
+    }
+  },
+  {
+    "name": "RhostMUSH",
+    "version": "4.0",
+    "description": "RhostMUSH is an advanced MUSH server with enhanced features",
+    "syntaxVariations": [],
+    "uniqueFeatures": [
+      {
+        "name": "Enhanced Security",
+        "description": "Advanced security and sandboxing features",
+        "syntax": "@security object=level",
+        "availability": [
+          "4.0+"
+        ],
+        "examples": [
+          "@security #123=high"
+        ]
+      }
+    ],
+    "securityModel": {
+      "permissionLevels": [
+        "guest",
+        "player",
+        "builder",
+        "wizard",
+        "immortal",
+        "god"
+      ],
+      "defaultLevel": "player",
+      "escalationRules": [],
+      "restrictedFunctions": [
+        "@shutdown",
+        "@restart",
+        "@dump"
+      ]
+    },
+    "functionLibrary": [],
+    "commonPatterns": [],
+    "limitations": [],
+    "documentation": {
+      "url": "http://rhostmush.org",
+      "version": "4.0"
+    }
+  },
+  {
+    "name": "TinyMUX",
+    "version": "2.12",
+    "description": "TinyMUX is a high-performance MUSH server implementation",
+    "syntaxVariations": [],
+    "uniqueFeatures": [
+      {
+        "name": "Performance Optimizations",
+        "description": "Optimized for high player counts and performance",
+        "syntax": "@performance",
+        "availability": [
+          "2.0+"
+        ],
+        "examples": [
+          "@performance stats"
+        ]
+      }
+    ],
+    "securityModel": {
+      "permissionLevels": [
+        "guest",
+        "player",
+        "builder",
+        "wizard",
+        "god"
+      ],
+      "defaultLevel": "player",
+      "escalationRules": [],
+      "restrictedFunctions": [
+        "@shutdown",
+        "@restart"
+      ]
+    },
+    "functionLibrary": [],
+    "commonPatterns": [],
+    "limitations": [],
+    "documentation": {
+      "url": "http://tinymux.org",
+      "version": "2.12"
+    }
+  },
+  {
+    "name": "MUX",
+    "version": "2.12",
+    "description": "MUX is another name for TinyMUX server",
+    "syntaxVariations": [],
+    "uniqueFeatures": [
+      {
+        "name": "Compatibility Mode",
+        "description": "Compatible with TinyMUX features",
+        "syntax": "@compat",
+        "availability": [
+          "2.0+"
+        ],
+        "examples": [
+          "@compat tinymux"
+        ]
+      }
+    ],
+    "securityModel": {
+      "permissionLevels": [
+        "guest",
+        "player",
+        "builder",
+        "wizard",
+        "god"
+      ],
+      "defaultLevel": "player",
+      "escalationRules": [],
+      "restrictedFunctions": [
+        "@shutdown",
+        "@restart"
+      ]
+    },
+    "functionLibrary": [],
+    "commonPatterns": [],
+    "limitations": [],
+    "documentation": {
+      "url": "http://tinymux.org",
+      "version": "2.12"
+    }
+  }
+]

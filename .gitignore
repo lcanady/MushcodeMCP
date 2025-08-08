@@ -32,9 +32,6 @@ coverage/
 logs/
 *.log
 
-# Knowledge base data files (too large for git)
-data/knowledge/*.json
-
 # Temporary files
 tmp/
 temp/

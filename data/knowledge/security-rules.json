@@ -1,0 +1,65 @@
+[
+  {
+    "ruleId": "SEC-001",
+    "name": "Unsafe Eval Usage",
+    "description": "Detects potentially unsafe eval() function usage with user input",
+    "severity": "high",
+    "category": "injection",
+    "pattern": "\\beval\\s*\\(\\s*%[0-9]",
+    "recommendation": "Use switch() or other conditional functions instead of eval() with user input",
+    "examples": {
+      "vulnerable": "eval(%0)",
+      "secure": "switch(%0, case1, action1, case2, action2, default)",
+      "explanation": "eval() with user input can execute arbitrary code. Use switch() for safe conditional logic."
+    },
+    "affectedServers": [
+      "PennMUSH",
+      "TinyMUSH",
+      "RhostMUSH"
+    ],
+    "cweId": "CWE-94",
+    "references": [
+      "https://mushcode.com/security/eval-risks"
+    ]
+  },
+  {
+    "ruleId": "SEC-002",
+    "name": "Missing Permission Check",
+    "description": "Administrative commands without proper permission validation",
+    "severity": "medium",
+    "category": "permission",
+    "pattern": "@(create|destroy|chown|set)\\s+[^;]*(?!.*haspower|.*controls|.*wizard)",
+    "recommendation": "Add permission checks before administrative operations",
+    "examples": {
+      "vulnerable": "@create %0=%1",
+      "secure": "@switch [haspower(%#, Builder)]=1, {@create %0=%1}, {You need Builder powers.}",
+      "explanation": "Always verify user permissions before executing administrative commands."
+    },
+    "affectedServers": [
+      "PennMUSH",
+      "TinyMUSH",
+      "RhostMUSH"
+    ],
+    "references": []
+  },
+  {
+    "ruleId": "SEC-003",
+    "name": "SQL Injection Risk",
+    "description": "SQL queries with unsanitized user input",
+    "severity": "critical",
+    "category": "injection",
+    "pattern": "sql\\s*\\([^)]*%[0-9]",
+    "recommendation": "Always sanitize user input before SQL queries",
+    "examples": {
+      "vulnerable": "sql(SELECT * FROM users WHERE name='%0')",
+      "secure": "sql(SELECT * FROM users WHERE name='[escape(%0)]')",
+      "explanation": "User input in SQL queries can lead to SQL injection attacks. Always escape input."
+    },
+    "affectedServers": [
+      "PennMUSH",
+      "TinyMUSH"
+    ],
+    "cweId": "CWE-89",
+    "references": []
+  }
+]

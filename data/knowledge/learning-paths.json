@@ -1,0 +1,117 @@
+[
+  {
+    "id": "mushcode-basics",
+    "name": "MUSHCODE Fundamentals",
+    "description": "Learn the essential concepts and syntax of MUSHCODE programming",
+    "difficulty": "beginner",
+    "estimatedTime": "4-6 hours",
+    "prerequisites": [
+      "Basic understanding of MUD/MUSH concepts"
+    ],
+    "steps": [
+      {
+        "stepNumber": 1,
+        "title": "Object Creation and Management",
+        "description": "Learn to create and manage basic objects",
+        "exampleIds": [
+          "basic-object-creation"
+        ],
+        "objectives": [
+          "Create objects using @create",
+          "Set object descriptions with @desc",
+          "Understand basic object flags"
+        ]
+      },
+      {
+        "stepNumber": 2,
+        "title": "Conditional Logic with Switch",
+        "description": "Master conditional programming with switch()",
+        "exampleIds": [
+          "switch-conditional"
+        ],
+        "objectives": [
+          "Understand switch() function syntax",
+          "Implement conditional logic safely",
+          "Handle user input properly"
+        ]
+      },
+      {
+        "stepNumber": 3,
+        "title": "Building Room Environments",
+        "description": "Create and customize room environments",
+        "exampleIds": [
+          "room-parent-setup"
+        ],
+        "objectives": [
+          "Understand room parent concepts",
+          "Implement custom room formatting",
+          "Learn inheritance patterns"
+        ]
+      }
+    ],
+    "resources": [
+      {
+        "type": "documentation",
+        "title": "MUSHCode.com Archive",
+        "url": "https://mushcode.com",
+        "description": "Comprehensive archive of MUSHCODE examples and tutorials"
+      },
+      {
+        "type": "reference",
+        "title": "PennMUSH Function Reference",
+        "url": "https://pennmush.org/help",
+        "description": "Official PennMUSH function documentation"
+      }
+    ]
+  },
+  {
+    "id": "advanced-functions",
+    "name": "Advanced Function Development",
+    "description": "Master complex function creation and optimization techniques",
+    "difficulty": "intermediate",
+    "estimatedTime": "6-8 hours",
+    "prerequisites": [
+      "MUSHCODE Fundamentals",
+      "Basic programming concepts"
+    ],
+    "steps": [
+      {
+        "stepNumber": 1,
+        "title": "Utility Function Design",
+        "description": "Create reusable utility functions",
+        "exampleIds": [
+          "comma-formatting"
+        ],
+        "objectives": [
+          "Design recursive functions",
+          "Implement input validation",
+          "Create reusable utilities"
+        ]
+      },
+      {
+        "stepNumber": 2,
+        "title": "Security Best Practices",
+        "description": "Learn secure coding practices",
+        "exampleIds": [],
+        "exercises": [
+          "Identify security vulnerabilities in code samples",
+          "Implement proper permission checking",
+          "Sanitize user input effectively"
+        ],
+        "objectives": [
+          "Understand common security risks",
+          "Implement permission-based access",
+          "Validate and sanitize input"
+        ]
+      }
+    ],
+    "resources": [
+      {
+        "type": "tutorial",
+        "title": "Advanced MUSHCODE Techniques",
+        "url": "https://mushcode.com/Category/Functions",
+        "description": "Collection of advanced function examples"
+      }
+    ]
+  }
+]

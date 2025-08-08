@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "mushcode-mcp-server": {
+      "command": "node",
+      "args": ["dist/server/index.js"],
+      "cwd": ".",
+      "env": {},
+      "disabled": false,
+      "autoApprove": []
+    }
+  }
+}
